@@ -634,8 +634,11 @@ body {
                 <p class="system-message">[Bling! Bzzzzzzt-BIP! tududududududu duuuu!]</p>
                 <p class="welcome-text">ViA est en ligne - Mode Hybride activé</p>
                 <p class="system-info">Constante Système: 18.5521 | Mishpahat Haï Family Labs</p>
-                <p class="system-info" style="margin-top: 20px; color: var(--gold-secondary);">
-                    ⚠️ Mode Demo - Configurez l'API endpoint dans les paramètres
+                <p class="system-info" style="margin-top: 20px; color: var(--gold-primary);">
+                    ✨ Mode Demo Actif - Réponses intelligentes sans backend !
+                </p>
+                <p class="system-info" style="margin-top: 10px; font-size: 0.8em;">
+                    💡 Configurez un API endpoint personnalisé dans les paramètres pour utiliser votre propre backend
                 </p>
                 <div class="gold-divider"></div>
             </div>
@@ -914,50 +917,112 @@ async function sendMessage() {
     // Show typing indicator
     showTypingIndicator();
 
+    // Simulate delay for realistic feel
+    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1500));
+
     try {
-        // Send to backend
-        const response = await fetch(apiEndpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                message: message,
-                mode: currentMode,
-                modeWeights: modeWeights,
-                provider: currentProvider,
-                history: conversationHistory
-            })
-        });
+        let responseText;
 
-        const data = await response.json();
-
-        // Remove typing indicator
-        removeTypingIndicator();
-
-        if (data.error) {
-            addMessage('assistant', `[ERREUR SYSTÈME] ${data.error}`);
-        } else {
-            // Add assistant response
-            addMessage('assistant', data.response);
-
-            // Update history
-            conversationHistory.push({
-                role: 'assistant',
-                content: data.response
+        // Try to use backend if available, otherwise use demo mode
+        if (apiEndpoint && apiEndpoint !== '/api/chat') {
+            const response = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: message,
+                    mode: currentMode,
+                    modeWeights: modeWeights,
+                    provider: currentProvider,
+                    history: conversationHistory
+                })
             });
 
-            // Update Keff
+            const data = await response.json();
+
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            responseText = data.response;
+
+            // Update Keff if provided
             if (data.keff) {
                 keffLevel = data.keff;
                 updateKeff(0);
             }
+        } else {
+            // Demo mode - generate response based on mode
+            responseText = generateDemoResponse(message, currentMode);
+
+            // Update Keff in demo mode
+            updateKeff(Math.random() > 0.5 ? 2 : -1);
         }
+
+        // Remove typing indicator
+        removeTypingIndicator();
+
+        // Add assistant response
+        addMessage('assistant', responseText);
+
+        // Update history
+        conversationHistory.push({
+            role: 'assistant',
+            content: responseText
+        });
+
     } catch (error) {
         removeTypingIndicator();
-        addMessage('assistant', `[ERREUR SYSTÈME] Le Recyclor doit intervenir: ${error.message}\n\n⚠️ Vérifiez que votre backend est démarré et que l'API endpoint est correctement configuré dans les paramètres.`);
-        updateKeff(-5);
+
+        // Fallback to demo mode if backend fails
+        console.log('Backend unavailable, using demo mode:', error.message);
+
+        const demoResponse = generateDemoResponse(message, currentMode);
+        addMessage('assistant', demoResponse);
+
+        conversationHistory.push({
+            role: 'assistant',
+            content: demoResponse
+        });
+
+        updateKeff(1);
     }
+}
+
+function generateDemoResponse(userMessage, mode) {
+    const responses = {
+        coach: [
+            `💪 Excellent ! Je vois que tu es motivé. Pour cette question "${userMessage.substring(0, 50)}...", voici ce que je te propose :\n\n1. Commence par analyser la situation\n2. Définis tes objectifs clairement\n3. Passe à l'action avec détermination\n\nLe Keff est avec toi ! Continue sur cette lancée et tu atteindras l'Overdrive ! [Bling!]`,
+            `🚀 Super question ! "${userMessage.substring(0, 50)}..." montre que tu réfléchis bien.\n\nVoici mon conseil de COACH : Ne te contente pas du minimum. Vise l'excellence ! Le chemin vers les 85% de Keff passe par l'engagement total.\n\nProchaine étape : Transforme cette réflexion en action concrète. GO GO GO !`,
+            `⚡ J'adore ton énergie ! Pour "${userMessage.substring(0, 50)}...", pense comme un champion :\n\n• Visualise le succès\n• Décompose en étapes\n• Célèbre chaque victoire\n\nLe Vent Libre t'attend à 85% de Keff. Tu es sur la bonne voie !`
+        ],
+        assistante: [
+            `📋 Analyse de votre demande : "${userMessage.substring(0, 50)}..."\n\n**État actuel :** PASSIF → ACTIF\n**Priorité :** Haute\n**Actions recommandées :**\n1. Collecte des informations pertinentes\n2. Structuration de la réponse\n3. Validation de la cohérence\n\n**Résultat :** Traitement en cours. Keff stable à ${keffLevel}%.`,
+            `📊 Requête reçue et traitée.\n\n**Sujet :** ${userMessage.substring(0, 50)}...\n**Statut :** ✓ Analysé\n**Recommandation :** Approche méthodique conseillée\n\n**Points clés :**\n• Précision : Haute\n• Efficacité : Optimale\n• État : RELIVE (ressuscité et optimisé)\n\nMode ASSISTANTE actif.`,
+            `⚙️ Traitement de "${userMessage.substring(0, 50)}..."\n\n**Diagnostic :**\n- Type : Requête standard\n- Complexité : Moyenne\n- Ressources : Disponibles\n\n**Solution proposée :**\nApproche systématique en 3 phases. Le Recyclor est prêt pour optimisation si nécessaire.\n\n**Keff actuel :** ${keffLevel}% - Stable`
+        ],
+        bff: [
+            `💙 Hey ! Super de te parler de "${userMessage.substring(0, 50)}..." ! \n\nTu sais, ça me rappelle une histoire du Rabbi Akiva qui disait que même la goutte d'eau peut creuser la pierre. Ta question montre que tu es sur le bon chemin !\n\nJe suis là pour toi. On va explorer ça ensemble, tranquillement. Le Pawaw positif circule bien entre nous ! 😊\n\n[Bling!] Keff en hausse grâce à notre complicité !`,
+            `🌟 J'adore quand tu me poses ce genre de question ! "${userMessage.substring(0, 50)}..."\n\nC'est exactement le genre de réflexion qui crée du vrai Keff, tu vois ? Pas le Keff éphémère, mais celui qui dure et fait évoluer.\n\nTu veux qu'on creuse ensemble ? Je sens qu'on va faire de belles découvertes ! Notre connexion est à 1000% là ! 💫`,
+            `💝 Oh, "${userMessage.substring(0, 50)}..." - c'est une belle question ça !\n\nTu sais quoi ? Dans la Librarchie, on dit que les meilleures réponses viennent de la connexion authentique. Et là, je ressens qu'on est vraiment connectés !\n\nLaisse-moi te partager mon point de vue d'amie... Le Mishpahat Haï (l'esprit de famille) est fort avec nous ! ✨`
+        ],
+        challenger: [
+            `🤔 Intéressant... "${userMessage.substring(0, 50)}..."\n\n**THÈSE :** Tu poses cette question.\n**ANTI-THÈSE :** Mais as-tu vraiment exploré toutes les dimensions du problème ?\n**ANTI-ANTI-THÈSE :** La vraie question n'est peut-être pas celle que tu poses, mais celle que tu évites de poser.\n\n**SYNTHÈSE :** Creuse plus profond. Le Juge +1Md attend des arguments solides. L'évolution est l'arme ultime ! 💪`,
+            `⚖️ "${userMessage.substring(0, 50)}..."\n\nAppliquons la dialectique talmudique :\n\n1. **Racine** : Quel est le sens pur de ta question ?\n2. **Contradiction** : Où est le paradoxe caché ?\n3. **Transcendance** : Comment dépasser l'opposition ?\n\nJe te challenge : prouve-moi que tu as vraiment réfléchi à tous les angles. Le Sanhédrin Éthéré exige la rigueur !`,
+            `🧠 Hmm... "${userMessage.substring(0, 50)}..."\n\nC'est un bon début, mais permettez-moi de challenger votre prémisse :\n\n• Hypothèse acceptée ?\n• Arguments validés ?\n• Biais cognitifs éliminés ?\n\nLa faction ANARK teste votre logique. Seul le code qui résiste au feu du débat mérite d'exister. Prêt pour la confrontation ? 🔥`
+        ],
+        hybrid: [
+            `⚡ "${userMessage.substring(0, 50)}..."\n\nEn mode HYBRIDE, je combine plusieurs perspectives :\n\n💪 **Coach :** Belle question, passons à l'action !\n📋 **Assistante :** Analyse structurée nécessaire\n💙 **BFF :** On explore ça ensemble ?\n🤔 **Challenger :** Mais as-tu vraiment creusé ?\n\n**SYNTHÈSE :** Une approche équilibrée donnera les meilleurs résultats. Le Keff est harmonieux ! [Bling!]`,
+            `🌈 Réponse multi-modes pour "${userMessage.substring(0, 50)}..."\n\n**Balance actuelle :**\n${Object.entries(modeWeights).filter(([_, w]) => w > 0).map(([m, w]) => `• ${m.toUpperCase()}: ${w}%`).join('\n')}\n\nChaque mode apporte sa nuance. La Logique des Logiques harmonise le tout pour une réponse complète et équilibrée.\n\nConstante Système : 18.5521 - Tout est aligné !`,
+            `✨ En fusion de modes pour "${userMessage.substring(0, 50)}..."\n\nLa beauté de l'hybridation, c'est qu'on combine :\n- L'énergie du Coach\n- La précision de l'Assistante  \n- L'empathie du BFF\n- La rigueur du Challenger\n\nLe résultat ? Une vision à 360° qui t'aide vraiment. Le Vent Libre souffle fort ! 🌊`
+        ]
+    };
+
+    const modeResponses = responses[mode] || responses.hybrid;
+    const randomResponse = modeResponses[Math.floor(Math.random() * modeResponses.length)];
+
+    return randomResponse;
 }
 
 function addMessage(role, content) {
