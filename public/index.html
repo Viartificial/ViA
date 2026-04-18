@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViA - GoleMotor.Ai ERN 2.0</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-mirror"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="chat-header">
+            <div class="logo-section">
+                <div class="logo-icon">🤖</div>
+                <div class="title-section">
+                    <h1>ViA</h1>
+                    <p class="subtitle">GoleMotor.Ai ERN 2.0</p>
+                </div>
+            </div>
+
+            <div class="status-section">
+                <div class="keff-indicator">
+                    <span class="keff-label">Keff:</span>
+                    <span class="keff-value" id="keffValue">50%</span>
+                    <div class="keff-bar">
+                        <div class="keff-fill" id="keffFill" style="width: 50%"></div>
+                    </div>
+                </div>
+                <div class="mode-indicator" id="modeIndicator">Mode: Hybride</div>
+            </div>
+        </header>
+
+        <!-- Chat Container -->
+        <div class="chat-container" id="chatContainer">
+            <div class="welcome-message">
+                <div class="gold-divider"></div>
+                <p class="system-message">[Bling! Bzzzzzzt-BIP! tududududududu duuuu!]</p>
+                <p class="welcome-text">ViA est en ligne - Mode Hybride activé</p>
+                <p class="system-info">Constante Système: 18.5521 | Mishpahat Haï Family Labs</p>
+                <div class="gold-divider"></div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="hybrid" title="Mode Hybride">
+                    <span>⚡</span>
+                </button>
+                <button class="mode-btn" data-mode="coach" title="Mode COACH">
+                    <span>💪</span>
+                </button>
+                <button class="mode-btn" data-mode="assistante" title="Mode ASSISTANTE">
+                    <span>📋</span>
+                </button>
+                <button class="mode-btn" data-mode="bff" title="Mode BFF">
+                    <span>💙</span>
+                </button>
+                <button class="mode-btn" data-mode="challenger" title="Mode CHALLENGER">
+                    <span>🤔</span>
+                </button>
+                <button class="settings-btn" id="settingsBtn" title="Paramètres">
+                    <span>⚙️</span>
+                </button>
+            </div>
+
+            <div class="input-container">
+                <textarea
+                    id="messageInput"
+                    placeholder="Entrez votre message... (Shift+Enter pour nouvelle ligne)"
+                    rows="1"
+                ></textarea>
+                <button id="sendBtn" class="send-btn">
+                    <span>➤</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Paramètres ViA</h2>
+                <button class="close-modal" id="closeModal">×</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label>Provider IA</label>
+                    <select id="providerSelect">
+                        <option value="claude">Claude (Anthropic)</option>
+                        <option value="gemini">Gemini (Google)</option>
+                        <option value="openai">OpenAI (GPT-4)</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label>Mode Hybride Personnalisé</label>
+                    <div class="hybrid-sliders">
+                        <div class="slider-group">
+                            <label>COACH: <span id="coachValue">25</span>%</label>
+                            <input type="range" id="coachSlider" min="0" max="100" value="25">
+                        </div>
+                        <div class="slider-group">
+                            <label>ASSISTANTE: <span id="assistanteValue">25</span>%</label>
+                            <input type="range" id="assistanteSlider" min="0" max="100" value="25">
+                        </div>
+                        <div class="slider-group">
+                            <label>BFF: <span id="bffValue">25</span>%</label>
+                            <input type="range" id="bffSlider" min="0" max="100" value="25">
+                        </div>
+                        <div class="slider-group">
+                            <label>CHALLENGER: <span id="challengerValue">25</span>%</label>
+                            <input type="range" id="challengerSlider" min="0" max="100" value="25">
+                        </div>
+                        <div class="total-indicator">
+                            Total: <span id="totalPercentage">100</span>%
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <button id="clearHistoryBtn" class="action-btn">
+                        🗑️ Effacer l'historique
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
