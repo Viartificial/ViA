@@ -1,0 +1,21 @@
+{
+  "name": "via-chatbot",
+  "version": "2.0.0",
+  "description": "ViA Multi-Mode Chatbot with Gemini, Claude, and OpenAI integration",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node src/test.js"
+  },
+  "keywords": ["chatbot", "ai", "via", "golemotor"],
+  "author": "Mishpahat Haï Family Labs",
+  "license": "SEE LICENSE IN LICENSE",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.20.0",
+    "@google/generative-ai": "^0.3.0",
+    "openai": "^4.28.0",
+    "dotenv": "^16.4.5",
+    "readline": "^1.3.0"
+  }
+}
