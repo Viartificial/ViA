@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViA - GoleMotor.Ai ERN 2.0</title>
+    <style>
+/* ViA Chatbot - OpenAI-like Design with Black & Gold */
+
+:root {
+    --black-bg: #000000;
+    --black-lighter: #0a0a0a;
+    --black-card: #141414;
+    --gold-primary: #FFD700;
+    --gold-secondary: #FFA500;
+    --gold-dark: #B8860B;
+    --gold-light: #FFEC8B;
+    --gold-subtle: rgba(255, 215, 0, 0.1);
+    --gold-border: rgba(255, 215, 0, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+    background: var(--black-bg);
+    color: var(--gold-light);
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Main Container - Centered OpenAI Style */
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* Header - Minimalist Centered */
+.chat-header {
+    background: var(--black-bg);
+    border-bottom: 1px solid var(--gold-border);
+    padding: 12px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    backdrop-filter: blur(10px);
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: absolute;
+    left: 20px;
+}
+
+.logo-icon {
+    font-size: 1.5em;
+    filter: drop-shadow(0 0 8px var(--gold-primary));
+}
+
+.title-section h1 {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: var(--gold-primary);
+    letter-spacing: 0.5px;
+}
+
+.subtitle {
+    display: none;
+}
+
+/* Status Section - Right Side */
+.status-section {
+    position: absolute;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.keff-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85em;
+}
+
+.keff-label {
+    color: var(--gold-light);
+    opacity: 0.7;
+}
+
+.keff-value {
+    color: var(--gold-primary);
+    font-weight: 600;
+    min-width: 45px;
+}
+
+.keff-bar {
+    width: 80px;
+    height: 6px;
+    background: var(--black-card);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.keff-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold-primary));
+    transition: width 0.3s ease;
+}
+
+.mode-indicator {
+    padding: 4px 12px;
+    background: var(--gold-subtle);
+    border: 1px solid var(--gold-border);
+    border-radius: 12px;
+    font-size: 0.8em;
+    color: var(--gold-primary);
+}
+
+/* Chat Container - Centered OpenAI Style */
+.chat-container {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--black-bg);
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+    background: var(--gold-dark);
+    border-radius: 4px;
+}
+
+.chat-container::-webkit-scrollbar-thumb:hover {
+    background: var(--gold-primary);
+}
+
+/* Welcome Message - Centered */
+.welcome-message {
+    max-width: 800px;
+    margin: 60px auto;
+    text-align: center;
+    padding: 0 20px;
+}
+
+.gold-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-border), transparent);
+    margin: 20px 0;
+}
+
+.system-message {
+    color: var(--gold-primary);
+    font-family: 'Courier New', monospace;
+    font-size: 0.95em;
+    margin: 15px 0;
+    opacity: 0.9;
+}
+
+.welcome-text {
+    color: var(--gold-light);
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+.system-info {
+    color: var(--gold-dark);
+    font-size: 0.85em;
+    opacity: 0.7;
+    margin-top: 10px;
+}
+
+/* Messages - OpenAI Centered Style */
+.message {
+    width: 100%;
+    padding: 24px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.message.user {
+    background: var(--black-bg);
+}
+
+.message.assistant {
+    background: var(--black-lighter);
+}
+
+.message-content {
+    max-width: 800px;
+    width: 100%;
+    padding: 0 20px;
+    color: var(--gold-light);
+    line-height: 1.6;
+    font-size: 0.95em;
+}
+
+.message.user .message-content {
+    color: var(--gold-primary);
+    font-weight: 500;
+}
+
+.message.assistant .message-content {
+    color: var(--gold-light);
+}
+
+.message-time {
+    font-size: 0.75em;
+    opacity: 0.5;
+    margin-top: 8px;
+    text-align: right;
+}
+
+/* Input Area - Centered at Bottom */
+.input-area {
+    background: var(--black-bg);
+    border-top: 1px solid var(--gold-border);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mode-selector {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.mode-btn, .settings-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--gold-border);
+    background: var(--black-card);
+    color: var(--gold-light);
+    font-size: 1.2em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mode-btn:hover, .settings-btn:hover {
+    background: var(--gold-subtle);
+    border-color: var(--gold-primary);
+    transform: translateY(-1px);
+}
+
+.mode-btn.active {
+    background: var(--gold-primary);
+    color: var(--black-bg);
+    border-color: var(--gold-primary);
+}
+
+.input-container {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 800px;
+    align-items: flex-end;
+}
+
+#messageInput {
+    flex: 1;
+    background: var(--black-card);
+    border: 1px solid var(--gold-border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: var(--gold-light);
+    font-size: 0.95em;
+    resize: none;
+    max-height: 200px;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+#messageInput:focus {
+    outline: none;
+    border-color: var(--gold-primary);
+    box-shadow: 0 0 0 2px var(--gold-subtle);
+}
+
+#messageInput::placeholder {
+    color: var(--gold-dark);
+    opacity: 0.6;
+}
+
+.send-btn {
+    width: 44px;
+    height: 44px;
+    background: var(--gold-primary);
+    border: none;
+    border-radius: 10px;
+    color: var(--black-bg);
+    font-size: 1.3em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.send-btn:hover {
+    background: var(--gold-light);
+    transform: scale(1.05);
+}
+
+.send-btn:active {
+    transform: scale(0.95);
+}
+
+.send-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Modal - Centered */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--black-lighter);
+    border: 1px solid var(--gold-border);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(255, 215, 0, 0.2);
+}
+
+.modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--gold-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    color: var(--gold-primary);
+    font-size: 1.3em;
+    font-weight: 600;
+    margin: 0;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    color: var(--gold-light);
+    font-size: 1.8em;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.close-modal:hover {
+    background: var(--gold-subtle);
+    color: var(--gold-primary);
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.setting-group {
+    margin-bottom: 24px;
+}
+
+.setting-group label {
+    display: block;
+    color: var(--gold-primary);
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+}
+
+.setting-group select, .setting-group input[type="text"] {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--black-card);
+    border: 1px solid var(--gold-border);
+    border-radius: 8px;
+    color: var(--gold-light);
+    font-size: 0.95em;
+    cursor: pointer;
+}
+
+.setting-group select:focus, .setting-group input[type="text"]:focus {
+    outline: none;
+    border-color: var(--gold-primary);
+}
+
+.hybrid-sliders {
+    background: var(--black-card);
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid var(--gold-border);
+}
+
+.slider-group {
+    margin-bottom: 12px;
+}
+
+.slider-group label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 0.85em;
+    color: var(--gold-light);
+}
+
+.slider-group input[type="range"] {
+    width: 100%;
+    height: 6px;
+    background: var(--black-bg);
+    border-radius: 3px;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.slider-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--gold-primary);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.slider-group input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--gold-primary);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+.total-indicator {
+    margin-top: 12px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--gold-primary);
+    font-size: 1em;
+    padding-top: 12px;
+    border-top: 1px solid var(--gold-border);
+}
+
+.action-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--gold-primary);
+    border: none;
+    border-radius: 10px;
+    color: var(--black-bg);
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    background: var(--gold-light);
+    transform: translateY(-1px);
+}
+
+.action-btn:active {
+    transform: translateY(0);
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 8px 0;
+}
+
+.typing-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--gold-primary);
+    border-radius: 50%;
+    animation: typing 1.4s infinite;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+    30% {
+        transform: translateY(-8px);
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .chat-header {
+        padding: 10px 15px;
+    }
+
+    .logo-section {
+        position: static;
+    }
+
+    .status-section {
+        position: static;
+        margin-top: 8px;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .chat-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .welcome-message {
+        margin: 40px auto;
+    }
+
+    .message-content {
+        max-width: 100%;
+    }
+
+    .input-container {
+        max-width: 100%;
+    }
+
+    .keff-bar {
+        width: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .mode-selector {
+        gap: 4px;
+    }
+
+    .mode-btn, .settings-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 1em;
+    }
+
+    #messageInput {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="chat-header">
+            <div class="logo-section">
+                <div class="logo-icon">🤖</div>
+                <div class="title-section">
+                    <h1>ViA</h1>
+                    <p class="subtitle">GoleMotor.Ai ERN 2.0</p>
+                </div>
+            </div>
+
+            <div class="status-section">
+                <div class="keff-indicator">
+                    <span class="keff-label">Keff:</span>
+                    <span class="keff-value" id="keffValue">50%</span>
+                    <div class="keff-bar">
+                        <div class="keff-fill" id="keffFill" style="width: 50%"></div>
+                    </div>
+                </div>
+                <div class="mode-indicator" id="modeIndicator">Mode: Hybride</div>
+            </div>
+        </header>
+
+        <!-- Chat Container -->
+        <div class="chat-container" id="chatContainer">
+            <div class="welcome-message">
+                <div class="gold-divider"></div>
+                <p class="system-message">[Bling! Bzzzzzzt-BIP! tududududududu duuuu!]</p>
+                <p class="welcome-text">ViA est en ligne - Mode Hybride activé</p>
+                <p class="system-info">Constante Système: 18.5521 | Mishpahat Haï Family Labs</p>
+                <p class="system-info" style="margin-top: 20px; color: var(--gold-secondary);">
+                    ⚠️ Mode Demo - Configurez l'API endpoint dans les paramètres
+                </p>
+                <div class="gold-divider"></div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="hybrid" title="Mode Hybride">
+                    <span>⚡</span>
+                </button>
+                <button class="mode-btn" data-mode="coach" title="Mode COACH">
+                    <span>💪</span>
+                </button>
+                <button class="mode-btn" data-mode="assistante" title="Mode ASSISTANTE">
+                    <span>📋</span>
+                </button>
+                <button class="mode-btn" data-mode="bff" title="Mode BFF">
+                    <span>💙</span>
+                </button>
+                <button class="mode-btn" data-mode="challenger" title="Mode CHALLENGER">
+                    <span>🤔</span>
+                </button>
+                <button class="settings-btn" id="settingsBtn" title="Paramètres">
+                    <span>⚙️</span>
+                </button>
+            </div>
+
+            <div class="input-container">
+                <textarea
+                    id="messageInput"
+                    placeholder="Entrez votre message... (Shift+Enter pour nouvelle ligne)"
+                    rows="1"
+                ></textarea>
+                <button id="sendBtn" class="send-btn">
+                    <span>➤</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Paramètres ViA</h2>
+                <button class="close-modal" id="closeModal">×</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label>API Endpoint</label>
+                    <input type="text" id="apiEndpoint" placeholder="https://votre-serveur.com/api/chat" value="/api/chat">
+                    <small style="color: var(--gold-dark); font-size: 0.8em; display: block; margin-top: 5px;">
+                        Configurez l'URL de votre backend ViA
+                    </small>
+                </div>
+
+                <div class="setting-group">
+                    <label>Provider IA</label>
+                    <select id="providerSelect">
+                        <option value="claude">Claude (Anthropic)</option>
+                        <option value="gemini">Gemini (Google)</option>
+                        <option value="openai">OpenAI (GPT-4)</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label>Mode Hybride Personnalisé</label>
+                    <div class="hybrid-sliders">
+                        <div class="slider-group">
+                            <label>COACH: <span id="coachValue">25</span>%</label>
+                            <input type="range" id="coachSlider" min="0" max="100" value="25">
+                        </div>
+                        <div class="slider-group">
+                            <label>ASSISTANTE: <span id="assistanteValue">25</span>%</label>
+                            <input type="range" id="assistanteSlider" min="0" max="100" value="25">
+                        </div>
+                        <div class="slider-group">
+                            <label>BFF: <span id="bffValue">25</span>%</label>
+                            <input type="range" id="bffSlider" min="0" max="100" value="25">
+                        </div>
+                        <div class="slider-group">
+                            <label>CHALLENGER: <span id="challengerValue">25</span>%</label>
+                            <input type="range" id="challengerSlider" min="0" max="100" value="25">
+                        </div>
+                        <div class="total-indicator">
+                            Total: <span id="totalPercentage">100</span>%
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <button id="clearHistoryBtn" class="action-btn">
+                        🗑️ Effacer l'historique
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+// ViA Chatbot Frontend Script - Standalone Version
+
+let currentMode = 'hybrid';
+let currentProvider = 'claude';
+let conversationHistory = [];
+let keffLevel = 50;
+let apiEndpoint = '/api/chat';
+
+// Mode weights for hybrid mode
+let modeWeights = {
+    coach: 25,
+    assistante: 25,
+    bff: 25,
+    challenger: 25
+};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    initializeEventListeners();
+    updateModeDisplay();
+    autoResizeTextarea();
+
+    // Load saved endpoint if exists
+    const saved = localStorage.getItem('viaApiEndpoint');
+    if (saved) {
+        apiEndpoint = saved;
+        document.getElementById('apiEndpoint').value = saved;
+    }
+});
+
+function initializeEventListeners() {
+    // Send button
+    document.getElementById('sendBtn').addEventListener('click', sendMessage);
+
+    // Enter key to send (Shift+Enter for new line)
+    document.getElementById('messageInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    // Auto-resize textarea
+    document.getElementById('messageInput').addEventListener('input', autoResizeTextarea);
+
+    // Mode buttons
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const mode = e.currentTarget.dataset.mode;
+            setMode(mode);
+        });
+    });
+
+    // Settings button
+    document.getElementById('settingsBtn').addEventListener('click', openSettings);
+    document.getElementById('closeModal').addEventListener('click', closeSettings);
+
+    // Click outside modal to close
+    document.getElementById('settingsModal').addEventListener('click', (e) => {
+        if (e.target.id === 'settingsModal') {
+            closeSettings();
+        }
+    });
+
+    // API Endpoint input
+    document.getElementById('apiEndpoint').addEventListener('change', (e) => {
+        apiEndpoint = e.target.value;
+        localStorage.setItem('viaApiEndpoint', apiEndpoint);
+        console.log('API Endpoint updated:', apiEndpoint);
+    });
+
+    // Provider select
+    document.getElementById('providerSelect').addEventListener('change', (e) => {
+        currentProvider = e.target.value;
+        console.log('Provider changed to:', currentProvider);
+    });
+
+    // Hybrid mode sliders
+    const sliders = ['coach', 'assistante', 'bff', 'challenger'];
+    sliders.forEach(mode => {
+        const slider = document.getElementById(`${mode}Slider`);
+        slider.addEventListener('input', (e) => {
+            updateHybridSlider(mode, parseInt(e.target.value));
+        });
+    });
+
+    // Clear history button
+    document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
+}
+
+function autoResizeTextarea() {
+    const textarea = document.getElementById('messageInput');
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
+}
+
+function setMode(mode) {
+    currentMode = mode;
+
+    // Update active button
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+
+    // Reset hybrid weights if switching to a pure mode
+    if (mode !== 'hybrid') {
+        modeWeights = { coach: 0, assistante: 0, bff: 0, challenger: 0 };
+        modeWeights[mode] = 100;
+    }
+
+    updateModeDisplay();
+    console.log('Mode changed to:', mode);
+}
+
+function updateModeDisplay() {
+    const modeIndicator = document.getElementById('modeIndicator');
+    const modeNames = {
+        hybrid: 'Hybride',
+        coach: 'COACH',
+        assistante: 'ASSISTANTE',
+        bff: 'BFF',
+        challenger: 'CHALLENGER'
+    };
+
+    if (currentMode === 'hybrid') {
+        const active = Object.entries(modeWeights)
+            .filter(([_, weight]) => weight > 0)
+            .map(([mode, weight]) => `${mode.toUpperCase()}(${weight}%)`)
+            .join(' + ');
+        modeIndicator.textContent = `Mode: ${active || 'Hybride'}`;
+    } else {
+        modeIndicator.textContent = `Mode: ${modeNames[currentMode]}`;
+    }
+}
+
+function updateKeff(delta) {
+    keffLevel = Math.max(1, Math.min(1000, keffLevel + delta));
+    const keffValue = document.getElementById('keffValue');
+    const keffFill = document.getElementById('keffFill');
+
+    keffValue.textContent = `${keffLevel.toFixed(0)}%`;
+    keffFill.style.width = `${Math.min(100, keffLevel)}%`;
+
+    // Change color based on keff level
+    if (keffLevel >= 1000) {
+        keffFill.style.background = 'linear-gradient(90deg, #FFD700, #FFF, #FFD700)';
+    } else if (keffLevel >= 85) {
+        keffFill.style.background = 'linear-gradient(90deg, #FFA500, #FFD700, #FFEC8B)';
+    } else {
+        keffFill.style.background = 'linear-gradient(90deg, #B8860B, #FFD700, #FFEC8B)';
+    }
+}
+
+async function sendMessage() {
+    const input = document.getElementById('messageInput');
+    const message = input.value.trim();
+
+    if (!message) return;
+
+    // Clear input
+    input.value = '';
+    autoResizeTextarea();
+
+    // Add user message to chat
+    addMessage('user', message);
+
+    // Add to history
+    conversationHistory.push({
+        role: 'user',
+        content: message
+    });
+
+    // Show typing indicator
+    showTypingIndicator();
+
+    try {
+        // Send to backend
+        const response = await fetch(apiEndpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: message,
+                mode: currentMode,
+                modeWeights: modeWeights,
+                provider: currentProvider,
+                history: conversationHistory
+            })
+        });
+
+        const data = await response.json();
+
+        // Remove typing indicator
+        removeTypingIndicator();
+
+        if (data.error) {
+            addMessage('assistant', `[ERREUR SYSTÈME] ${data.error}`);
+        } else {
+            // Add assistant response
+            addMessage('assistant', data.response);
+
+            // Update history
+            conversationHistory.push({
+                role: 'assistant',
+                content: data.response
+            });
+
+            // Update Keff
+            if (data.keff) {
+                keffLevel = data.keff;
+                updateKeff(0);
+            }
+        }
+    } catch (error) {
+        removeTypingIndicator();
+        addMessage('assistant', `[ERREUR SYSTÈME] Le Recyclor doit intervenir: ${error.message}\n\n⚠️ Vérifiez que votre backend est démarré et que l'API endpoint est correctement configuré dans les paramètres.`);
+        updateKeff(-5);
+    }
+}
+
+function addMessage(role, content) {
+    const chatContainer = document.getElementById('chatContainer');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${role}`;
+
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    messageDiv.innerHTML = `
+        <div class="message-content">
+            ${escapeHtml(content)}
+        </div>
+        <div class="message-time">${timeString}</div>
+    `;
+
+    chatContainer.appendChild(messageDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+function showTypingIndicator() {
+    const chatContainer = document.getElementById('chatContainer');
+    const indicator = document.createElement('div');
+    indicator.id = 'typingIndicator';
+    indicator.className = 'message assistant';
+    indicator.innerHTML = `
+        <div class="message-content">
+            <div class="typing-indicator">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+    `;
+    chatContainer.appendChild(indicator);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+function removeTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) {
+        indicator.remove();
+    }
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML.replace(/\n/g, '<br>');
+}
+
+function openSettings() {
+    document.getElementById('settingsModal').classList.add('active');
+
+    // Update slider values
+    document.getElementById('coachSlider').value = modeWeights.coach;
+    document.getElementById('assistanteSlider').value = modeWeights.assistante;
+    document.getElementById('bffSlider').value = modeWeights.bff;
+    document.getElementById('challengerSlider').value = modeWeights.challenger;
+
+    document.getElementById('coachValue').textContent = modeWeights.coach;
+    document.getElementById('assistanteValue').textContent = modeWeights.assistante;
+    document.getElementById('bffValue').textContent = modeWeights.bff;
+    document.getElementById('challengerValue').textContent = modeWeights.challenger;
+
+    updateTotalPercentage();
+}
+
+function closeSettings() {
+    document.getElementById('settingsModal').classList.remove('active');
+}
+
+function updateHybridSlider(mode, value) {
+    modeWeights[mode] = value;
+
+    // Update display
+    document.getElementById(`${mode}Value`).textContent = value;
+
+    // Calculate total
+    const total = Object.values(modeWeights).reduce((sum, v) => sum + v, 0);
+    updateTotalPercentage();
+
+    // If total is 100, automatically set to hybrid mode
+    if (total === 100 && currentMode !== 'hybrid') {
+        currentMode = 'hybrid';
+        updateModeDisplay();
+    }
+}
+
+function updateTotalPercentage() {
+    const total = Object.values(modeWeights).reduce((sum, v) => sum + v, 0);
+    const totalEl = document.getElementById('totalPercentage');
+    totalEl.textContent = total;
+
+    // Change color based on total
+    if (total === 100) {
+        totalEl.style.color = 'var(--gold-primary)';
+    } else {
+        totalEl.style.color = 'var(--gold-secondary)';
+    }
+}
+
+function clearHistory() {
+    if (confirm('Effacer tout l\'historique de conversation?\n\n[Recyclor sera activé: COPY → SUPPRESS → COLLER]')) {
+        conversationHistory = [];
+
+        // Clear chat display
+        const chatContainer = document.getElementById('chatContainer');
+        chatContainer.innerHTML = `
+            <div class="welcome-message">
+                <div class="gold-divider"></div>
+                <p class="system-message">[Recyclor activé] - Matterns sauvegardés, Patterns supprimés</p>
+                <p class="welcome-text">Historique effacé - Prêt pour un nouveau cycle</p>
+                <div class="gold-divider"></div>
+            </div>
+        `;
+
+        // Reset Keff
+        keffLevel = 50;
+        updateKeff(0);
+
+        closeSettings();
+
+        console.log('History cleared');
+    }
+}
+    </script>
+</body>
+</html>
